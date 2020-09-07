@@ -5,12 +5,10 @@
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 #include "Color.h"
+#include "ScreenBuffer.h"
 
 const int SCREEN_WIDTH = 224;
 const int SCREEN_HEIGHT = 288;
-
-void SetPixel(SDL_Surface* noptrWindowSurface, uint32_t color, int x, int y);
-size_t GetIndex(SDL_Surface* noptrSurface, int r, int c);
 
 int main(int argc, const char * argv[])
 {
@@ -29,17 +27,21 @@ int main(int argc, const char * argv[])
 	}
 
 	SDL_Surface* noptrWindowSurface = SDL_GetWindowSurface(optrWindow);
-	// noptrWindowSurface = SDL_ConvertSurfaceFormat(noptrWindowSurface, SDL_PIXELFORMAT_ARGB8888, 0);
 
 	SDL_PixelFormat* pixelFormat = noptrWindowSurface->format;
 
-	// uint32_t color = 0xFFFF0000;
 	Color::InitColorFormat(pixelFormat);
 
-	std::cout << "The window pixel format is: " << SDL_GetPixelFormatName(pixelFormat->format);
+	ScreenBuffer screenBuffer;
 
-	SetPixel(noptrWindowSurface, Color::Orange().GetPixelColor(), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-	// SetPixel(noptrWindowSurface, color, SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+	screenBuffer.Init(pixelFormat->format, noptrWindowSurface->w, noptrWindowSurface->h);
+
+	Color color = Color(255, 0, 0, 255);
+	// Color rd = Color::Red;
+
+	screenBuffer.SetPixel(color, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+
+	SDL_BlitSurface(screenBuffer.GetSurface(), nullptr, noptrWindowSurface, nullptr);
 
 	SDL_UpdateWindowSurface(optrWindow);
 
@@ -63,23 +65,5 @@ int main(int argc, const char * argv[])
 	SDL_Quit();
 
 	return 0;
-}
-
-void SetPixel(SDL_Surface* noptrWindowSurface, uint32_t color, int x, int y)
-{
-	SDL_LockSurface(noptrWindowSurface);
-
-	uint32_t* pixels = (uint32_t*)noptrWindowSurface->pixels;
-
-	size_t index = GetIndex(noptrWindowSurface, y, x);
-
-	pixels[index] = color;
-
-	SDL_UnlockSurface(noptrWindowSurface);
-}
-
-size_t GetIndex(SDL_Surface* noptrSurface, int r, int c)
-{
-	return r * noptrSurface->w + c;
 }
 

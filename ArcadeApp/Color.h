@@ -1,3 +1,4 @@
+#pragma once
 #ifndef GRAPHICS_COLOR_H_
 #define GRAPHICS_COLOR_H_
 
