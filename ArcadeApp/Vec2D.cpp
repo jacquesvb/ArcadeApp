@@ -150,3 +150,8 @@ float Vec2D::Distance(const Vec2D& vec) const
 {
 	return (vec - *this).Mag();
 }
+
+float Vec2D::Dot(const Vec2D& vec) const
+{
+	return mX * vec.mX + mY * vec.mY;
+}
